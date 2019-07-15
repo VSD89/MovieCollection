@@ -1,27 +1,33 @@
 package ru.vsd.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import ru.vsd.model.Movie;
+import ru.vsd.service.MovieService;
+import ru.vsd.service.MovieServiceImpl;
+
+import java.util.List;
 
 @Controller
 public class MovieController {
-    private static Movie movie;
+    private MovieService movieService;
 
-    static {
-        movie = new Movie();
-        movie.setTitle("Point Break");
-        movie.setYear(1991);
-        movie.setGenre("action");
-        movie.setWatched(true);
+    @Autowired
+    public void setMovieService(MovieService movieService) {
+        this.movieService = movieService;
     }
 
     @GetMapping(value = "/")
     public ModelAndView allMovies() {
+        List<Movie> movies = movieService.allMovies();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("movies");
-        modelAndView.addObject("movie", movie);
+        modelAndView.addObject("moviesList", movies);
         return modelAndView;
     }
 
@@ -31,4 +37,37 @@ public class MovieController {
         modelAndView.setViewName("editPage");
         return modelAndView;
     }
+
+    @GetMapping(value = "/edit/{id}")
+    public ModelAndView editPage(@PathVariable("id") int id) {
+//        Movie movie = movieService.getById(id);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("editPage");
+        modelAndView.addObject("movie", movieService.getById(id));
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/edit")
+    public ModelAndView editMovie(@ModelAttribute("movie") Movie movie) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:/");
+        movieService.edit(movie);
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/add")
+    public ModelAndView addPage() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("editPage");
+        return modelAndView;
+    }
+
+    @PostMapping(value = "/add")
+    public ModelAndView addMovie(@ModelAttribute("movie") Movie movie) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:/");
+        movieService.edit(movie);
+        return modelAndView;
+    }
+
 }
