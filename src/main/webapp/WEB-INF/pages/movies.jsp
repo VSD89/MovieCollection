@@ -3,10 +3,10 @@
 <html>
 <head>
     <title>Movies</title>
+    <link href="<c:url value="/res/style.css"/>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <h1>Movies</h1>
-<h2><a href="/edit">edit page</a></h2>
 <table>
     <tr>
         <th>id</th>
